@@ -1,0 +1,9 @@
+[
+  {
+    "py/object": "model.project.Project",
+    "name": "name23",
+    "description": "desc123",
+    "status": "30",
+    "view_status": "10"
+  }
+]
