@@ -54,6 +54,14 @@ class ProjectHelper:
         wd = self.app.wd
         wd.find_element_by_xpath("//a[contains(@href, 'manage_proj_edit_page.php?project_id=%s')]" %id).click()
 
-
-
-
+    def get_project_list(self, count):
+        wd = self.app.wd
+        self.open_create_page()
+        self.project_catch = []
+        for i in count:
+            row = wd.find_element_by_name("row-%s" % str(i))
+            elements_td = row.find_elements_by_tag_name('td')
+            name = elements_td[1].text
+            description = elements_td[5].text
+            self.project_catch.append(Project(name=name, description=description))
+        return list(self.project_catch)

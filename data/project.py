@@ -3,8 +3,8 @@ from model.project import Project
 import random
 import string
 
-status_list = ['development', 'release', 'stable', 'obsolete']
-view_status_list = ['public', 'private']
+status_list = ['10', '30', '50', '70']
+view_status_list = ['10', '50']
 
 def random_string(prefix, maxlen):
     symbols = string.ascii_letters + string.digits + string.punctuation + " "*10

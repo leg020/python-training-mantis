@@ -4,6 +4,7 @@
     "name": "name23",
     "description": "desc123",
     "status": "30",
-    "view_status": "10"
+    "view_status": "10",
+    "id": null
   }
 ]
