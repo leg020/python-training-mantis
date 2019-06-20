@@ -18,10 +18,10 @@ class DbFixture:
         list = []
         cursor = self.connection.cursor()
         try:
-            cursor.execute("select id, name, status, view_status, description from mantis_project_table")
+            cursor.execute("select id, name, status, view_state, description from mantis_project_table")
             for row in cursor:
                 (id, name, status, view_status, description) = row
-                list.append(Project(id=str(id), name=name, description=description, status=status, view_status=view_status))
+                list.append(Project(id=str(id), name=name, description=description, status=str(status), view_status=str(view_status)))
         finally:
             cursor.close()
         return list
