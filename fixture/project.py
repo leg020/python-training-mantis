@@ -58,10 +58,15 @@ class ProjectHelper:
         wd = self.app.wd
         self.open_create_page()
         self.project_catch = []
-        for i in count:
-            row = wd.find_element_by_name("row-%s" % str(i))
+        row_number = 1
+        for i in range(count):
+            row = wd.find_element_by_css_selector("tr.row-%s" % (row_number))
             elements_td = row.find_elements_by_tag_name('td')
-            name = elements_td[1].text
-            description = elements_td[5].text
+            name = elements_td[0].text
+            description = elements_td[4].text
             self.project_catch.append(Project(name=name, description=description))
+            if row_number == 1:
+                row_number = 2
+            else:
+                row_number = 1
         return list(self.project_catch)
