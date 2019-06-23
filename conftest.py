@@ -6,6 +6,7 @@ from fixture.db import DbFixture
 from fixture.application import Application
 import jsonpickle
 import importlib
+import ftputil
 
 fixture = None
 target = None
@@ -18,6 +19,21 @@ def load_config(file):
         with open(config_file) as f:
             target = json.load(f)
     return target
+''''
+@pytest.fixture(scope='session')
+def config(request):
+    return load_config(request.config.getoption('--target'))
+'''
+"""""
+@pytest.fixture
+def app(request):
+    global fixture
+    browser = request.config.getoption('browser', config)
+    if fixture is None or not fixture.is_valid():
+        fixture = Application(browser=browser, base_url=config['web']['baseUrl'])
+    return fixture
+
+"""""
 
 @pytest.fixture
 def app(request):
@@ -40,6 +56,15 @@ def db(request):
     request.addfinalizer(fin)
     return dbfixture
 
+""""" # Для FTP
+@pytest.fixture(scope='session', autouse=True)
+def configure_server(request):
+    config = load_config(request.config.getoption('--target'))
+    install_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+    def fin():
+        restore_server_configuration(config['ftp']['host'], config['ftp']['username'], config['ftp']['password'])
+    request.addfinalizer(fin)
+"""
 
 @pytest.fixture(scope='session', autouse=True)
 def stop(request):
@@ -48,8 +73,6 @@ def stop(request):
         fixture.destroy()
     request.addfinalizer(fin)
     return fixture
-
-
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action='store', default='firefox')
@@ -63,6 +86,23 @@ def pytest_generate_tests(metafunc):
         elif fixture.startswith('json_'):
             testdata = load_from_json(fixture[5:])
             metafunc.parametrize(fixture, testdata, ids=[str(x) for x in testdata])
+
+#Для FTP
+def install_server_configuration(host, username, password):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile('config_inc.php.bak'):
+            remote.remove('config_inc.php.bak')
+        if remote.path.isfile('config_inc.php'):
+            remote.rename('config_inc.php', 'config_inc.php.bak')
+        remote.upload(os.path.join(os.path.dirname(__file__), 'resources/config_inc.php'), "config_inc.php")
+#Для FTP
+def restore_server_configuration(host, username, password):
+    with ftputil.FTPHost(host, username, password) as remote:
+        if remote.path.isfile('config_inc.php.bak'):
+            if remote.path.isfile('config_inc.php'):
+                remote.remove('config_inc.php')
+            remote.rename('config_inc.php.bak', 'config_inc.php')
+
 
 def load_from_module(module):
     return importlib.import_module('data.%s' % module).testdata

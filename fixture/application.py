@@ -1,6 +1,7 @@
 from selenium import webdriver
 from fixture.session import SessionHelper
 from fixture.project import ProjectHelper
+from fixture.soap import SoapHelper
 __author__ = 'Alex'
 
 
@@ -19,6 +20,7 @@ class Application:
         self.session = SessionHelper(self)
         self.base_url = base_url
         self.project = ProjectHelper(self)
+        self.soap = SoapHelper(self)
 
     def open_home_page(self):
         wd = self.wd
