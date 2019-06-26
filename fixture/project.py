@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from selenium.webdriver.support.ui import Select
-from  model.project import Project
+from model.project import Project
 
 
 class ProjectHelper:
